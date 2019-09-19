@@ -67,10 +67,34 @@ public class OrderService {
 		}
 	}
 	
+	/**
+	 * 空のショッピングカートを作成するメソッドです.
+	 * 
+	 * @param userId
+	 */
+	public void insert(Integer userId) {
+		orderRepository.insertOfStatus0(userId);
+	}
+	
+	/**
+	 * statusが0のショッピングカートを検索するメソッドです.
+	 * 
+	 * @param userId
+	 * @return
+	 */
 	public List<Order> findByStatus0(Integer userId){
 		
 		List<Order> orderList = orderRepository.findByStatus0(userId);
 		return orderList;
+	}
+	
+	/**
+	 * ショッピングカートの商品を削除するメソッドです.
+	 * 
+	 * @param id
+	 */
+	public void deletOfItemInCart(String id) {
+		orderRepository.deleteOfItemInCart(Integer.parseInt(id));
 	}
 
 }

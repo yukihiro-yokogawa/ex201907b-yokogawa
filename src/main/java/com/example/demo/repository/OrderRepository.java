@@ -194,11 +194,23 @@ public class OrderRepository {
 		
 		List<Order> orderList = template.query(sql,param,ORDER_RESULT_SET_EXTRACTER);
 		
-		System.out.println(orderList);
 		if(orderList.size() == 0) {
 			return null;
 		}
 		return orderList;
+	}
+	
+	/**
+	 * ショッピングカートの中身を削除するメソッドです.
+	 * 
+	 * @param id
+	 */
+	public void deleteOfItemInCart(Integer id) {
+		String sql ="WITH deleted AS (DELETE FROM order_items WHERE id=:id RETURNING id) DELETE FROM order_toppings WHERE order_item_id IN (SELECT id FROM deleted);";
+
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id",id);
+
+		template.update(sql, param);
 	}
 
 }
