@@ -96,5 +96,9 @@ public class OrderService {
 	public void deletOfItemInCart(String id) {
 		orderRepository.deleteOfItemInCart(Integer.parseInt(id));
 	}
+	
+	public void update(Integer userId,Integer compareToken) {
+		orderRepository.update(userId,compareToken);
+	}
 
 }

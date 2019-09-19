@@ -33,6 +33,11 @@ public class UserController {
 		return "register_user";
 	}
 	
+	@RequestMapping("/login")
+	public void cartUpdate() {
+		System.out.println(1);
+	}
+	
 	@RequestMapping("/insert")
 	public String login(@Validated UserForm form, BindingResult rs, Model model) {
 		
@@ -49,8 +54,6 @@ public class UserController {
 		if(rs.hasErrors()) {
 			return insertForm();
 		}
-		
-		System.out.println(form);
 		
 		userService.insert(form);
 		

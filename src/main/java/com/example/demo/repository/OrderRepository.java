@@ -212,5 +212,18 @@ public class OrderRepository {
 
 		template.update(sql, param);
 	}
+	
+	/**
+	 * 未ログイン時のショッピングカートをログイン後のユーザーでアップデートするメソッドです.
+	 * 
+	 * @param userId
+	 */
+	public void update(Integer userId,Integer compareToken) {
+		String sql = "UPDATE orders SET user_id=:userId WHERE user_id=:compareToken";
+		
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId",userId).addValue("compareToken",compareToken);
+		
+		template.update(sql, param);
+	}
 
 }

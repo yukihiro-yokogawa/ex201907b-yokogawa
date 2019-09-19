@@ -81,10 +81,10 @@ public class OrderItem {
 		int toppingPrice = 0;
 		int toppingCount = orderToppingList.size();
 		
-		if(size == 'M') {
+		if(size != null && size == 'M') {
 			itemPrice = item.getPriceM();
 			toppingPrice = 200*toppingCount;
-		}if(size == 'L') {
+		}if(size != null && size == 'L') {
 			itemPrice = item.getPriceL();
 			toppingPrice = 300*toppingCount;
 		}
