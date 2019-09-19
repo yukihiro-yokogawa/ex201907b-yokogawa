@@ -33,11 +33,13 @@ public class OrderRepository {
 	private static final ResultSetExtractor<List<Order>> ORDER_RESULT_SET_EXTRACTER = (rs) -> {
 		
 		List<Order> orderList = new ArrayList<>();
-		List<OrderItem> orderItemList = new ArrayList<>();
-		List<OrderTopping> orderToppingList = new ArrayList<>();
+		List<OrderItem> orderItemList = null;
+		List<OrderTopping> orderToppingList = null;
+		OrderTopping orderTopping = new OrderTopping();
 		
 		int orderIdBefore = -1;
 		int orderItemIdBefore = -1;
+		int orderToppingIdBefore=-1;
 		
 		while(rs.next()){
 			
@@ -58,11 +60,12 @@ public class OrderRepository {
 				order.setDeliveryTime(rs.getTimestamp("ord_dev_time"));
 				order.setPaymentMethod(rs.getInt("ord_payment_method"));
 
+				orderItemList = new ArrayList<>();
 				order.setOrderItemList(orderItemList);
-			
 				orderList.add(order);
 			}
 			
+			orderIdBefore = orderIdNow;
 			int orderItemIdNow = rs.getInt("ord_i_id");
 			if(orderItemIdBefore != orderItemIdNow) {
 				//order_itemsテーブルから取り出す
@@ -86,12 +89,16 @@ public class OrderRepository {
 				//orderItemオブジェクトに商品情報をセット
 				orderItem.setItem(item);
 			
+				orderToppingList = new ArrayList<>();
 				orderItem.setOrderToppingList(orderToppingList);			
-			
+				
 				orderItemList.add(orderItem);
 			}
-			OrderTopping orderTopping = new OrderTopping();
 			
+			orderItemIdBefore = orderItemIdNow;
+			int orderToppingIdNow = rs.getInt("ord_t_id");
+			if(orderToppingIdBefore != orderToppingIdNow) {
+			orderTopping = new OrderTopping();
 			orderTopping.setId(rs.getInt("ord_t_id"));
 			orderTopping.setToppingId(rs.getInt("ord_t_topping_id"));
 			orderTopping.setOrderItemId(rs.getInt("ord_t_order_item_id"));
@@ -104,6 +111,9 @@ public class OrderRepository {
 			orderTopping.setTopping(topping);
 			
 			orderToppingList.add(orderTopping);
+			}
+			orderToppingIdBefore = orderToppingIdNow;
+			
 		}
 		return orderList;
 	};
@@ -170,7 +180,7 @@ public class OrderRepository {
 				+ " FULL OUTER JOIN"
 				+ " order_toppings AS ord_t"
 				+ " ON"
-				+ " ord_i.order_id=ord_t.order_item_id"
+				+ " ord_i.id=ord_t.order_item_id"
 				+ " LEFT OUTER JOIN"
 				+ " items AS itm"
 				+ " ON"
@@ -188,7 +198,6 @@ public class OrderRepository {
 		if(orderList.size() == 0) {
 			return null;
 		}
-		
 		return orderList;
 	}
 

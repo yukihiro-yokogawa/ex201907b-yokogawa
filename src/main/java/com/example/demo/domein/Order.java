@@ -163,9 +163,35 @@ public class Order {
 		this.orderItemList = orderItemList;
 	}
 	
+	public int getCalcTotalPrice() {
+		int totalPrice = 0;
+		for(OrderItem orderItem : orderItemList) {
+			totalPrice = totalPrice + orderItem.getSubTotal();
+		}
+		totalPrice = (int)(totalPrice * 1.08);
+		return totalPrice;
+	}
+	
 	public int getTax() {
 		int tax = 0;
+		int taxTotalPrice = 0;
+		for (OrderItem orderItem : orderItemList){
+			taxTotalPrice = taxTotalPrice + orderItem.getSubTotal();
+		}
+		tax = (int)(taxTotalPrice * 0.08);
 		return tax;
 	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", userId=" + userId + ", status=" + status + ", totalPrice=" + totalPrice
+				+ ", orderDate=" + orderDate + ", destinationName=" + destinationName + ", destinationEmail="
+				+ destinationEmail + ", destinationZipcode=" + destinationZipcode + ", destinationAddress="
+				+ destinationAddress + ", destinationTel=" + destinationTel + ", destinationTime=" + destinationTime
+				+ ", deliveryTime=" + deliveryTime + ", paymentMethod=" + paymentMethod + ", user=" + user
+				+ ", orderItemList=" + orderItemList + "]";
+	}
+	
+	
 	
 }

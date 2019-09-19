@@ -77,6 +77,19 @@ public class OrderItem {
 	public int getSubTotal() {
 		
 		int subTotal = 0;
+		int itemPrice = 0;
+		int toppingPrice = 0;
+		int toppingCount = orderToppingList.size();
+		
+		if(size == 'M') {
+			itemPrice = item.getPriceM();
+			toppingPrice = 200*toppingCount;
+		}if(size == 'L') {
+			itemPrice = item.getPriceL();
+			toppingPrice = 300*toppingCount;
+		}
+
+		subTotal = (itemPrice + toppingPrice) * quantity;
 		return subTotal;
 		
 	}

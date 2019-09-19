@@ -1,11 +1,16 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.Form.OrderItemForm;
 import com.example.demo.common.GetUserId;
+import com.example.demo.domein.Order;
+import com.example.demo.domein.OrderItem;
 import com.example.demo.service.OrderService;
 
 /**
@@ -22,7 +27,14 @@ public class OrderController {
 	@Autowired
 	private GetUserId getUserId;
 	
-	@RequestMapping("/cart")
+
+	/**
+	 * ショッピングカートに商品を追加するメソッドです.
+	 * 
+	 * @param form
+	 * @return
+	 */
+	@RequestMapping("/insertCart")
 	public String shoppingCartInsert(OrderItemForm form) {
 		
 		Integer userId = getUserId.getUserId();
@@ -30,7 +42,21 @@ public class OrderController {
 			orderService.insert(form, userId);
 		}
 		
-		return "cart_list";
+		return "redirect:/shopping/showCart";
 	}
 	
+	/**
+	 * ショッピングカートを表示するメソッドです.
+	 * 
+	 * @return ショッピングカート
+	 */
+	@RequestMapping("/showCart")
+	public String showCart(Model model) {
+		Integer userId = getUserId.getUserId();
+		List<Order> orderList = orderService.findByStatus0(userId);
+		List<OrderItem> orderItemList = orderService.findByStatus0(userId).get(0).getOrderItemList();
+		System.out.println(orderItemList);
+		model.addAttribute("orderList",orderList);
+		return "cart_list";
+	}
 }
