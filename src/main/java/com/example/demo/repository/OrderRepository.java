@@ -225,5 +225,18 @@ public class OrderRepository {
 		
 		template.update(sql, param);
 	}
+	
+	/**
+	 * ショッピングカートを削除するメソッドです.
+	 * 
+	 * @param id
+	 */
+	public void delete(Integer userId) {
+		String sql ="DELETE FROM orders WHERE user_id=:userId;";
+		
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
+		
+		template.update(sql, param);
+	}
 
 }

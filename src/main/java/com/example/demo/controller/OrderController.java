@@ -66,19 +66,28 @@ public class OrderController {
 		//未ログイン時、nullが返ってきている
 		Integer userId = getUserId.getUserId();
 		String compareToken = String.valueOf(session.getAttribute("provisionalId"));
-		System.out.println(userId);
-		System.out.println(compareToken);
 		if(userId == null && "null".equals (compareToken)) {
+			//未ログイン且つ初めてSessionを作ったとき
 			Random random = new Random();
 			Integer provisionalId = random.nextInt(2147483646)-2147483647;
 			userId = provisionalId;
 			session.setAttribute("provisionalId", provisionalId);
 		}else if(userId == null && compareToken .equals (String.valueOf(session.getAttribute("provisionalId")))) {
+			//未ログイン且つ既にSessionを持っていた時
 			userId = Integer.parseInt(String.valueOf(session.getAttribute("provisionalId")));
-		}else if(userId != null && compareToken .equals (String.valueOf(session.getAttribute("provisionalId")))) {
+		}else if(userId != null && !("null".equals(compareToken)) && compareToken .equals (String.valueOf(session.getAttribute("provisionalId")))) {
+			//未ログイン時にショッピングカートを使用した後にログインした時
 			if(orderService.findByStatus0(userId)==null) {
-				orderService.update(userId,Integer.parseInt(compareToken));
+				//ログイン後のユーザーが購入前のショッピングカートを持っていなかった時
+				orderService.updateOrder(userId,Integer.parseInt(compareToken));
+			}else if(orderService.findByStatus0(userId)!=null) {
+				//ログイン後のユーザーが購入前のショッピングカートを持っていた時
+				Integer orderId = orderService.findByStatus0(userId).get(0).getId();
+				Integer orderProvisionalId = orderService.findByStatus0(Integer.parseInt(compareToken)).get(0).getId();
+				orderService.updateOrderItem(orderId, orderProvisionalId);
+				orderService.deleteOrder(Integer.parseInt(compareToken));
 			}
+			session.removeAttribute("provisionalId");
 		}
 		
 		if(orderService.findByStatus0(userId) == null) {
@@ -99,5 +108,41 @@ public class OrderController {
 	public String itemDelete(String id) {
 		orderService.deletOfItemInCart(id);
 		return "redirect:/shopping/showCart";
+	}
+	
+	/**
+	 * 注文確認画面に遷移させるメソッドです.
+	 * @param model
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/confirm")
+	public String orderConfirm(Model model,HttpSession session) {
+		//未ログイン時、nullが返ってきている
+		Integer userId = getUserId.getUserId();
+		String compareToken = String.valueOf(session.getAttribute("provisionalId"));
+		
+		if(orderService.findByStatus0(userId).get(0).getOrderItemList().get(0).getId() == 0) {
+			return "redirect:/top";
+		}
+		
+		if(userId != null && !("null".equals(compareToken)) && compareToken .equals (String.valueOf(session.getAttribute("provisionalId")))) {
+			//未ログイン時にショッピングカートを使用した後にログインした時
+			if(orderService.findByStatus0(userId)==null) {
+				//ログイン後のユーザーが購入前のショッピングカートを持っていなかった時
+				orderService.updateOrder(userId,Integer.parseInt(compareToken));
+			}else if(orderService.findByStatus0(userId)!=null) {
+				//ログイン後のユーザーが購入前のショッピングカートを持っていた時
+				Integer orderId = orderService.findByStatus0(userId).get(0).getId();
+				Integer orderProvisionalId = orderService.findByStatus0(Integer.parseInt(compareToken)).get(0).getId();
+				orderService.updateOrderItem(orderId, orderProvisionalId);
+				orderService.deleteOrder(Integer.parseInt(compareToken));
+			}
+			session.removeAttribute("provisionalId");
+		}
+		List<Order> orderList = orderService.findByStatus0(userId);
+		model.addAttribute("orderList",orderList);
+
+		return "order_confirm";
 	}
 }

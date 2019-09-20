@@ -27,8 +27,8 @@
 							class="icon-bar"></span> <span class="icon-bar"></span> <span
 							class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="item_list.html"> <!-- 企業ロゴ --> <img
-						alt="main log" src="img/header_logo.png" height="35">
+					<a class="navbar-brand" href="item_list.html" th:href="@{/top}"> <!-- 企業ロゴ -->
+						<img alt="main log" th:src="@{/img_curry/header_logo.png}" height="35">
 					</a>
 				</div>
 
@@ -128,11 +128,13 @@
 		</div>
 
 		<div class="row">
-			<div class="col-xs-offset-5 col-xs-3">
+			<div th:each="order:${orderList}" class="col-xs-offset-5 col-xs-3">
 				<div class="form-group">
-					<form action="order_confirm.html">
-						<input class="form-control btn btn-warning btn-block"
-							type="submit" value="注文に進む">
+					<form th:if="${order.calcTotalPrice != 0}" th:action="@{/shopping/confirm}" action="order_confirm.html">
+						<input class="form-control btn btn-warning btn-block" type="submit" value="注文に進む">
+					</form>
+					<form th:if="${order.calcTotalPrice == 0}" th:action="@{/top}" action="item_list.html">
+						<input class="form-control btn btn-warning btn-block" type="submit" value="商品一覧に戻る">
 					</form>
 				</div>
 			</div>

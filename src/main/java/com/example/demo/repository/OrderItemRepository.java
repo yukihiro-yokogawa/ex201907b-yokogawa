@@ -3,6 +3,7 @@ package com.example.demo.repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -42,6 +43,15 @@ public class OrderItemRepository {
 		
 		Integer id = template.queryForObject(sql, param, ORDERITEM_ROW_MAPPER);
 		return id;
+	}
+	
+	public void update(Integer orderId,Integer orderProvisionalId) {
+		
+		SqlParameterSource param = new MapSqlParameterSource().addValue("orderId", orderId).addValue("orderProvisionalId", orderProvisionalId);
+		
+		String sql ="UPDATE order_items SET order_id=:orderId WHERE order_id=:orderProvisionalId;";
+		
+		template.update(sql, param);
 	}
 	
 }

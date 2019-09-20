@@ -97,8 +97,27 @@ public class OrderService {
 		orderRepository.deleteOfItemInCart(Integer.parseInt(id));
 	}
 	
-	public void update(Integer userId,Integer compareToken) {
+	/**
+	 * カートを持った匿名ユーザーがログインした時に既存のカートを持っていなかった場合に未ログイン時のカートの中身をログイン後のユーザーのショッピングカートとして扱うメソッドです.
+	 * 
+	 * @param userId
+	 * @param compareToken
+	 */
+	public void updateOrder(Integer userId,Integer compareToken) {
 		orderRepository.update(userId,compareToken);
 	}
 
+	/**
+	 * カートを持った匿名ユーザーがログインした時に既存のカートを持っていた場合に未ログイン時のカートの中身をログイン後のユーザーのショッピングカートとして扱うメソッドです.
+	 * 
+	 * @param orderId
+	 * @param orderProvisionalId
+	 */
+	public void updateOrderItem(Integer orderId,Integer orderProvisionalId) {
+		orderItemRepository.update(orderId, orderProvisionalId);
+	}
+	
+	public void deleteOrder(Integer userId) {
+		orderRepository.delete(userId);
+	}
 }
